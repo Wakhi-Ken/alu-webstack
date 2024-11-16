@@ -33,15 +33,21 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-        frontend http80
-                bind *:80
-                mode http
-                default_backend web_servers
-        frontend https443
-                bind *:443 ssl crt /etc/haproxy/gasore.tech.pem
-                http-request set-header X-Forwarded-Proto https
-                default_backend web_servers
-        backend web_servers
-                balance roundrobin
-                server 5408-web-01 54.196.213.59:80 check
-                server 5408-web-02 34.233.136.84:80 check
+frontend http_front
+    bind *:80
+    stats uri /stats
+    default_backend web-backend
+    mode http
+    http-request redirect scheme https code 301 unless { ssl_fc }
+    http-request set-header X_Forwarded-Proto http
+
+frontend https_front
+    bind *:443 ssl crt /etc/letsencrypt/live/www.wakhi-ken.tech/haproxy.pem
+    http-request set-header X_Forwarded-Proto https
+    default_backend web-backend
+
+
+backend web-backend
+        balance roundrobin
+        server 6352-web-01 54.196.213.59:80 check
+        server 6352-web-02 34.233.136.84:80 check
