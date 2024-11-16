@@ -38,11 +38,11 @@ defaults
                 mode http
                 default_backend web_servers
         frontend https443
-                bind *:443 ssl crt /etc/haproxy/gasore.tech.pem
+                bind *:443 ssl crt /etc/haproxy/wakhi-ken.tech.pem
                 http-request set-header X-Forwarded-Proto https
                 default_backend web_servers
         backend web_servers
                 balance roundrobin
                 redirect scheme https unless { ssl_fc }
-                server 5408-web-01 54.196.213.59:80 check
-                server 5408-web-02 34.233.136.84:80 check
+                server 6352-web-01 54.196.213.59:80 check
+                server 6352-web-02 34.233.136.84:80 check
